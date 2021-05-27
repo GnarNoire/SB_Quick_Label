@@ -4,3 +4,5 @@ def code():
         xC = firstInput.xpos() + firstInput.screenWidth()/2
         yC = firstInput.ypos() + firstInput.screenHeight()/2    
         nuke.zoom( 3, [ xC, yC ])
+
+        
