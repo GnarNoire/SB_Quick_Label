@@ -1,5 +1,5 @@
 ######## add to your menu.py 
- 
+import SB_button
 import SB_autopostage
 #################   my menu add ######## 
 import SB_quickLabel
