@@ -1,0 +1,51 @@
+### MAKE PATH ABSOLUTE ############
+import nuke
+import os
+
+# Get the path of the current Nuke script
+script_path = nuke.root().name()
+
+# Get the directory of the script
+script_directory = os.path.dirname(script_path)
+
+# Create a list to hold the nodes that need path changes
+nodes_to_change = []
+
+# Loop through all nodes
+for node in nuke.allNodes():
+    node_type = node.Class()
+
+    # Check if the node is a Read or Write node
+    if node_type == 'Read' or node_type == 'Write':
+        # Get the file path from the node
+        file_path = node['file'].value()
+
+        # Check if the file path is relative
+        if not os.path.isabs(file_path):
+            # Create the absolute file path with forward slashes
+            abs_path = os.path.abspath(os.path.join(script_directory, file_path)).replace('\\', '/')
+            # Add the node and the new path to the nodes_to_change list
+            nodes_to_change.append((node, abs_path))
+
+# Ask for confirmation before making the path changes
+if len(nodes_to_change) > 0:
+    # Create a message to display the new file paths
+    message = "The following file paths will be changed:\n\n"
+    for node, abs_path in nodes_to_change:
+        message += f"{node.name()}:\n{abs_path}\n\n"
+    
+    # Add a confirmation message to the pop-up
+    message += "Do you want to proceed?"
+    
+    # Display the message in a pop-up window and ask for confirmation
+    result = nuke.ask(message)
+    
+    if result:
+        # Loop through all the nodes that need path changes and set the new file paths
+        for node, abs_path in nodes_to_change:
+            node['file'].setValue(abs_path)
+        nuke.message("File paths changed successfully.")
+    else:
+        nuke.message("File paths not changed.")
+else:
+    nuke.message("No file paths to change.")
